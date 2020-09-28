@@ -25,16 +25,37 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = \
 if 1 in debug_mode:
   print(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
 
-def language_analysis(text):
-  client = language.LanguageServiceClient()
-  #client2 = language.Client()
-#  document = client.document_from_text(text)
-#  sent_analysis = document.analyze_sentiment()
-#  print(dir(sent_analysis))
+# debug block 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+client = language.LanguageServiceClient()
+
+def text2doc(inStr):
+  document = language.types.Document(
+    content=inStr,
+    language='en',
+    type='PLAIN_TEXT',
+  )
+  return document
+
+# debug block 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# this part is from google
+# https://googleapis.dev/python/language/latest/usage.html
   
 def main():
- p = language_analysis('hi i am very happy!  wow!')
- print(p)
+  
+  text2doc('Hi i am having a lot of fun!  :) whee.')
+    
+  response = client.analyze_sentiment(
+     document=text2doc('Hi i am having a lot of fun!  :) whee.'),
+     encoding_type='UTF32',
+  )
+  
+  sentiment = response.document_sentiment
+  print(sentiment.score)
+  
+  # p = print_result(document)
+  #return p
+  #print_result('hi i am very happy!  wow!')
   
 if __name__ == '__main__':
   main()
