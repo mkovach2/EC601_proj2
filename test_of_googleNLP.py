@@ -44,7 +44,7 @@ def analSent(inDoc):
   )
   
   sentiment = response.document_sentiment
-  if 0:
+  if 2 in debug_mode:
     print(sentiment.score)
   return sentiment.score
 
@@ -56,8 +56,8 @@ def main():
   
   text2doc('Hi i am having a lot of fun!  :) whee.')
   
-  sentiment = response.document_sentiment
-  print(sentiment.score)
+  #sentiment = response.document_sentiment
+  #print(sentiment.score)
   
   # p = print_result(document)
   #return p
