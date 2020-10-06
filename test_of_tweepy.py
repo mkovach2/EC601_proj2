@@ -7,6 +7,7 @@ Created on Fri Sep 25 11:10:06 2020
 
 import tweepy
 import configparser
+import pandas as pd
 
 confKeys = configparser.ConfigParser(interpolation=None)
 
@@ -32,11 +33,21 @@ def myOwnLast(numTweets): # function that prints the most recent numTweet...
   return public_tweets[:numTweets]
     
 def searchShortcut(term, num):
- # j = api.search(q = 'term', )
-  j = 1
- 
+  allDims = pd.DataFrame(columns  = ['id','lat','long','text'])
+  j = api.search(q = term, count = num, result_type = 'recent', lang = 'en')
+  for w in j:
+    if (w.place != None) and not(w.id in allDims[['id']].values):
+      wlat = w.place.bounding_box.coordinates[0][1][1]
+      wlong = w.place.bounding_box.coordinates[0][1][0]
+      allDims = allDims.append({'id':w.id,'lat':wlat, 'long':wlong, 'text':w.text}, ignore_index = 1)
+  return(allDims)
+
 def main():
   myOwnLast(19)
-
+  bigMatrix = pd.DataFrame()
+  while bigMatrix.size < 30:
+    bigMatrix = bigMatrix.append(searchShortcut('a',100), ignore_index = 1)
+  print(bigMatrix)
+  
 if __name__ == '__main__':
   main()
