@@ -12,13 +12,14 @@ and test_of_tweepy.
 
 debug_mode = []
 
+import pandas as pd
 import test_of_tweepy as tot
 import test_of_googleNLP as gnlp
 
 # debug block 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 term = 'debug' # term to search for in later function
-number = 10 #number of tweets to retrieve in search
+twtCount = 10 #number of tweets to retrieve in search
 
 lastTweet = tot.myOwnLast(10)
 allUsers = []
@@ -36,7 +37,22 @@ for tweetItem in lastTweet:
   
 def main():
   for i in range(len(allTweets)):
-    print(allUsers[i], '\t\t', allSentiments[i])
+    if 2 in debug_mode:
+      print(allUsers[i], '\t\t', allSentiments[i])
+    
+  bigMatrix = pd.DataFrame()
+  bigMatrix = tot.searchShortcut(term,twtCount)
+  print(bigMatrix)
+  for tweetText in bigMatrix[['text']].values:
+    print(tweetText)
   
 if __name__ == '__main__':
   main()
+  
+  
+  
+  
+  
+  
+  
+  

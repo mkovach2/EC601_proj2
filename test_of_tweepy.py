@@ -21,7 +21,7 @@ keyDict = confKeys['authentication_info']
 auth = tweepy.OAuthHandler(keyDict['api_key'], keyDict['api_secret'])
 auth.set_access_token(keyDict['access_token'], keyDict['access_secret'])
 
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=False)
 
 def myOwnLast(numTweets): # function that prints the most recent numTweet...
                           # ... tweets from one's own feed
@@ -34,19 +34,18 @@ def myOwnLast(numTweets): # function that prints the most recent numTweet...
     
 def searchShortcut(term, num):
   allDims = pd.DataFrame(columns  = ['id','lat','long','text'])
-  j = api.search(q = term, count = num, result_type = 'recent', lang = 'en')
-  for w in j:
-    if (w.place != None) and not(w.id in allDims[['id']].values):
-      wlat = w.place.bounding_box.coordinates[0][1][1]
-      wlong = w.place.bounding_box.coordinates[0][1][0]
-      allDims = allDims.append({'id':w.id,'lat':wlat, 'long':wlong, 'text':w.text}, ignore_index = 1)
+  while len(allDims.index) < num:
+    j = api.search(q = term, count = num, result_type = 'recent', lang = 'en')
+    for w in j:
+      if (w.place != None) and not(w.id in allDims[['id']].values):
+        wlat = w.place.bounding_box.coordinates[0][1][1]
+        wlong = w.place.bounding_box.coordinates[0][1][0]
+        allDims = allDims.append({'id':w.id,'lat':wlat, 'long':wlong, 'text':w.text}, ignore_index = 1)
   return(allDims)
 
 def main():
   myOwnLast(19)
-  bigMatrix = pd.DataFrame()
-  while bigMatrix.size < 30:
-    bigMatrix = bigMatrix.append(searchShortcut('a',100), ignore_index = 1)
+  bigMatrix = searchShortcut('a',10)
   print(bigMatrix)
   
 if __name__ == '__main__':
